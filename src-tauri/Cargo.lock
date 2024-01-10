@@ -861,7 +861,9 @@ dependencies = [
 name = "game-monitor"
 version = "0.0.0"
 dependencies = [
+ "lazy_static",
  "nvml-wrapper",
+ "random_color",
  "serde",
  "serde_json",
  "sysinfo",
@@ -2213,6 +2215,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "16abd0c1b639e9eb4d7c50c0b8100b0d0f849be2349829c740fe8e6eb4816429"
 dependencies = [
  "rand_core 0.5.1",
+]
+
+[[package]]
+name = "random_color"
+version = "0.8.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0085421bc527effa7ed6d46bac0a28734663c47abe03d80a5e78e441fad85196"
+dependencies = [
+ "rand 0.8.5",
 ]
 
 [[package]]

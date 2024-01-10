@@ -1,8 +1,10 @@
-import "./styles.css";
-import App from "./App.svelte";
+import { createGpuMemoryChart } from "./charts/gpu";
 
-const app = new App({
-  target: document.getElementById("app"),
+document.addEventListener("DOMContentLoaded", async () => {
+  const canvas = document.getElementById("myChart") as HTMLCanvasElement;
+  console.log(canvas);
+  // if (canvas === null) {
+  //   throw new TypeError("unable to get chart context");
+  // }
+  await createGpuMemoryChart(canvas);
 });
-
-export default app;

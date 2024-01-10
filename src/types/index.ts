@@ -16,7 +16,6 @@ export type GpuStats = {
   memory_used: number;
   fan_speed: number;
   temperature: number;
-  running_graphics_processes: Array<RunningGraphicsProcess>;
   power_usage: number;
 };
 
@@ -26,7 +25,12 @@ export type StaticGpuStats = {
   total_memory: number;
 };
 
-export type RunningGraphicsProcess = {
-  name: string;
-  memory_used: number;
+export type ChartData = {
+  labels: string[];
+  datasets: Array<{
+    label: string;
+    data: number[];
+    background_color: string[];
+    hover_offset: number;
+  }>;
 };

@@ -1,3 +1,5 @@
+use super::chart::{ChartData, ChartDataSets};
+
 use nvml_wrapper::enum_wrappers::device::TemperatureSensor;
 
 use nvml_wrapper::enums::device::UsedGpuMemory;
@@ -21,6 +23,12 @@ pub struct StaticGpuStats {
     pub name: String,
     pub id: u32,
     pub total_memory: u64,
+}
+
+#[derive(serde::Serialize)]
+pub struct GpuMemoryUsage {
+    pub free_memory: u64,
+    pub used_memory: u64,
 }
 
 #[derive(serde::Serialize)]
@@ -73,7 +81,16 @@ pub fn read_static_gpu_stats(device: &nvml_wrapper::Device) -> StaticGpuStats {
     };
 }
 
-fn get_running_graphics_processes(
+pub fn get_gpu_memory_usage(device: &nvml_wrapper::Device) -> GpuMemoryUsage {
+    let memory_info = device.memory_info().expect("error retrieving memory info");
+
+    return GpuMemoryUsage {
+        free_memory: memory_info.free / 1_048_576,
+        used_memory: memory_info.used / 1_048_576,
+    };
+}
+
+pub fn get_running_graphics_processes(
     graphics_processes: Vec<ProcessInfo>,
 ) -> Vec<RunningGraphicsProcess> {
     let mut system = System::new();
@@ -91,11 +108,12 @@ fn get_running_graphics_processes(
                 .expect("error retrieving process id")
                 .name()
                 .to_string(),
-            memory_used: used_mem / 1024 / 1024,
+            memory_used: used_mem / 1_048_576,
         };
 
         all_running_graphics_process.push(running_graphics_process);
     }
 
+    all_running_graphics_process.sort_by(|a, b| b.memory_used.cmp(&a.memory_used));
     return all_running_graphics_process;
 }
