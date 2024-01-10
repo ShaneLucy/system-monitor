@@ -6,12 +6,9 @@ mod gpu;
 mod gpu_memory;
 mod system;
 
-use gpu_memory::get_gpu_memory_usage;
-use gpu::{
-      read_gpu_stats, read_static_gpu_stats,
-     GpuStats,  StaticGpuStats,
-};
 use chart::ChartData;
+use gpu::{read_gpu_stats, read_static_gpu_stats, GpuStats, StaticGpuStats};
+use gpu_memory::get_gpu_memory_usage;
 
 use system::{read_static_system_stats, read_system_stats, StaticSystemStats, SystemStats};
 

@@ -2,60 +2,34 @@ use super::chart::{ChartData, ChartDataSets};
 use super::colours::COLOUR_HEX_CODES;
 
 use nvml_wrapper::enums::device::UsedGpuMemory;
-use nvml_wrapper::struct_wrappers::device::*;
+use nvml_wrapper::Device;
 use sysinfo::{Pid, System};
-
-struct GpuMemoryUsage {
-    pub free_memory: u64,
-    pub used_memory: u64,
-}
-
 
 struct ProcessMemoryUtilisation {
     pub name: String,
     pub memory_used: u64,
 }
 
-pub fn get_gpu_memory_usage(device: &nvml_wrapper::Device) -> ChartData {
-    let graphics_processes = device
-        .running_graphics_processes()
-        .expect("error retrieving running graphics processes");
-    let unused_memory = ProcessMemoryUtilisation {
-        name: String::from("Unused Memory"),
-        memory_used: device
-            .memory_info()
-            .expect("error retrieving memory info")
-            .free  / 1_048_576,
-    };
+pub fn get_gpu_memory_usage(device: &Device) -> ChartData {
+    
 
-    let mut process_memory_utilisation = get_running_graphics_processes(graphics_processes);
-
-    process_memory_utilisation.push(unused_memory);
-
+    let mut process_memory_utilisation = get_running_graphics_processes(&device);
+    process_memory_utilisation.push(get_unused_memory(&device));
     process_memory_utilisation.sort_by(|a, b| a.memory_used.cmp(&b.memory_used));
 
-    let mut chart_data_sets = Vec::new();
-    chart_data_sets.push(ChartDataSets {
-            data: process_memory_utilisation
-                .iter()
-                .map(|process| process.memory_used)
-                .collect(),
-            background_color: COLOUR_HEX_CODES[..process_memory_utilisation.len()].to_vec(),
-        });
-
     return ChartData {
-        labels: process_memory_utilisation
-            .iter()
-            .map(|process| format!("{}: {} MB", process.name, process.memory_used))
-            .collect(),
-        datasets: chart_data_sets
-       
+        labels: build_labels(&process_memory_utilisation),
+        datasets: build_chart_datasets(&process_memory_utilisation),
     };
 }
 
 fn get_running_graphics_processes(
-    graphics_processes: Vec<ProcessInfo>,
+    device: &Device
 ) -> Vec<ProcessMemoryUtilisation> {
+    let graphics_processes = device
+        .running_graphics_processes()
+        .expect("error retrieving running graphics processes");
+
     let mut system = System::new();
     system.refresh_all();
 
@@ -78,4 +52,37 @@ fn get_running_graphics_processes(
     }
 
     return all_running_graphics_process;
+}
+
+fn get_unused_memory(device: &Device) -> ProcessMemoryUtilisation {
+    return ProcessMemoryUtilisation {
+        name: String::from("Unused Memory"),
+        memory_used: device
+            .memory_info()
+            .expect("error retrieving memory info")
+            .free
+            / 1_048_576,
+    };
+}
+
+fn build_chart_datasets(
+    process_memory_utilisation: &Vec<ProcessMemoryUtilisation>,
+) -> Vec<ChartDataSets> {
+    let mut chart_data_sets = Vec::new();
+    chart_data_sets.push(ChartDataSets {
+        data: process_memory_utilisation
+            .iter()
+            .map(|process| process.memory_used)
+            .collect(),
+        background_color: COLOUR_HEX_CODES[..process_memory_utilisation.len()].to_vec(),
+    });
+
+    return chart_data_sets;
+}
+
+fn build_labels(process_memory_utilisation: &Vec<ProcessMemoryUtilisation>) -> Vec<String> {
+    return process_memory_utilisation
+        .iter()
+        .map(|process| format!("{}: {} MB", process.name, process.memory_used))
+        .collect();
 }
