@@ -1,10 +1,11 @@
-import { createGpuMemoryChart } from "./charts/gpu";
+import { createGpuMemoryChart, updateGpuMemoryChart } from "./charts/gpu";
 
 document.addEventListener("DOMContentLoaded", async () => {
   const canvas = document.getElementById("myChart") as HTMLCanvasElement;
-  console.log(canvas);
-  // if (canvas === null) {
-  //   throw new TypeError("unable to get chart context");
-  // }
-  await createGpuMemoryChart(canvas);
+
+  if (canvas === null) {
+    throw new TypeError("unable to get chart context");
+  }
+  const gpuChart = await createGpuMemoryChart(canvas);
+  updateGpuMemoryChart(gpuChart);
 });

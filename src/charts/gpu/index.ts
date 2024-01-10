@@ -1,4 +1,5 @@
 import { invoke } from "@tauri-apps/api/tauri";
+
 import { ChartData } from "../../types";
 
 import { Chart, registerables } from "chart.js";
@@ -6,9 +7,7 @@ import { Chart, registerables } from "chart.js";
 export const createGpuMemoryChart = async (canvas: HTMLCanvasElement) => {
   Chart.register(...registerables);
   const gpuMemoryStats = (await invoke("gpu_memory_stats")) as ChartData;
-
-  console.log(JSON.stringify(gpuMemoryStats));
-  const chart = new Chart(canvas, {
+  return new Chart(canvas, {
     type: "doughnut",
     data: {
       labels: gpuMemoryStats.labels,
@@ -22,16 +21,19 @@ export const createGpuMemoryChart = async (canvas: HTMLCanvasElement) => {
       ],
     },
   });
+};
 
-  //   while (true) {
-  //     const gpuMemoryUsage: GpuMemoryUsage = (await invoke(
-  //       "gpu_memory_stats"
-  //     )) as GpuMemoryUsage;
+export const updateGpuMemoryChart = async (
+  chart: Chart<"doughnut", number[], string>
+) => {
+  try {
+    const gpuMemoryStats = (await invoke("gpu_memory_stats")) as ChartData;
 
-  //     chart.data.datasets[0].data = [
-  //       gpuMemoryUsage.used_memory,
-  //       gpuMemoryUsage.free_memory,
-  //     ];
-  //     chart.update();
-  //   }
+    chart.data.datasets[0].data = [...gpuMemoryStats.datasets[0].data];
+    chart.update();
+    updateGpuMemoryChart(chart);
+  } catch (error) {
+    console.error("error calling back end for gpu stats");
+    setTimeout(updateGpuMemoryChart, 1_000);
+  }
 };
