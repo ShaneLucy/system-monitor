@@ -11,8 +11,6 @@ struct ProcessMemoryUtilisation {
 }
 
 pub fn get_gpu_memory_usage(device: &Device) -> ChartData {
-    
-
     let mut process_memory_utilisation = get_running_graphics_processes(&device);
     process_memory_utilisation.push(get_unused_memory(&device));
     process_memory_utilisation.sort_by(|a, b| a.memory_used.cmp(&b.memory_used));
@@ -23,9 +21,7 @@ pub fn get_gpu_memory_usage(device: &Device) -> ChartData {
     };
 }
 
-fn get_running_graphics_processes(
-    device: &Device
-) -> Vec<ProcessMemoryUtilisation> {
+fn get_running_graphics_processes(device: &Device) -> Vec<ProcessMemoryUtilisation> {
     let graphics_processes = device
         .running_graphics_processes()
         .expect("error retrieving running graphics processes");

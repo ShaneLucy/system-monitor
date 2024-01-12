@@ -2,10 +2,9 @@ import { invoke } from "@tauri-apps/api/tauri";
 
 import { ChartData } from "../../types";
 
-import { Chart, registerables } from "chart.js";
+import { Chart } from "chart.js";
 
 export const createGpuMemoryChart = async (canvas: HTMLCanvasElement) => {
-  Chart.register(...registerables);
   const gpuMemoryStats = (await invoke("gpu_memory_stats")) as ChartData;
   return new Chart(canvas, {
     type: "doughnut",

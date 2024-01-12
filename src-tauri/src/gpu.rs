@@ -1,6 +1,5 @@
 use nvml_wrapper::enum_wrappers::device::TemperatureSensor;
 
-
 #[derive(serde::Serialize)]
 pub struct GpuStats {
     pub gpu_utilisation: u32,
@@ -16,8 +15,6 @@ pub struct StaticGpuStats {
     pub id: u32,
     pub total_memory: u64,
 }
-
-
 
 pub fn read_gpu_stats(device: &nvml_wrapper::Device) -> GpuStats {
     return GpuStats {
@@ -49,4 +46,3 @@ pub fn read_static_gpu_stats(device: &nvml_wrapper::Device) -> StaticGpuStats {
             .total,
     };
 }
-

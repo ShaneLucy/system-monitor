@@ -2,9 +2,18 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 mod chart;
 mod colours;
+mod cpu;
 mod gpu;
 mod gpu_memory;
 mod system;
+
+use cpu::{get_cpu_usage, get_initial_cpu_usage};
+use tauri::{AppHandle, Manager};
+
+use sysinfo::{CpuRefreshKind, RefreshKind, System};
+
+use std::thread;
+use std::time::Duration;
 
 use chart::ChartData;
 use gpu::{read_gpu_stats, read_static_gpu_stats, GpuStats, StaticGpuStats};
@@ -12,19 +21,19 @@ use gpu_memory::get_gpu_memory_usage;
 
 use system::{read_static_system_stats, read_system_stats, StaticSystemStats, SystemStats};
 
-use systemstat::{Platform, System};
+// use systemstat::{Platform, System};
 
 use nvml_wrapper::Nvml;
 
-#[tauri::command]
-fn static_system_stats() -> StaticSystemStats {
-    return read_static_system_stats(&System::new());
-}
+// #[tauri::command]
+// fn static_system_stats() -> StaticSystemStats {
+//     return read_static_system_stats(&System::new());
+// }
 
-#[tauri::command]
-fn system_stats() -> SystemStats {
-    return read_system_stats(&System::new());
-}
+// #[tauri::command]
+// fn system_stats() -> SystemStats {
+//     return read_system_stats(&System::new());
+// }
 
 #[tauri::command]
 fn static_gpu_stats() -> StaticGpuStats {
@@ -50,11 +59,13 @@ fn gpu_memory_stats() -> ChartData {
 fn main() {
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![
-            static_system_stats,
-            system_stats,
+            // static_system_stats,
+            // system_stats,
             static_gpu_stats,
             gpu_stats,
-            gpu_memory_stats
+            gpu_memory_stats,
+            get_cpu_usage,
+            get_initial_cpu_usage
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
