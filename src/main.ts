@@ -5,7 +5,6 @@ import {
   createCpuUtilisationChart,
   updateCpuUtilisationChart,
 } from "./charts/cpu";
-import { invoke } from "@tauri-apps/api/tauri";
 
 document.addEventListener("DOMContentLoaded", async () => {
   Chart.register(...registerables);

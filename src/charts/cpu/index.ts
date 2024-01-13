@@ -23,7 +23,7 @@ type UpdatedCpuUtilisationResponse = {
 
 export const createCpuUtilisationChart = async (canvas: HTMLCanvasElement) => {
   const cpuUtilisation = (await invoke(
-    "get_initial_cpu_usage"
+    "get_initial_cpu_usage",
   )) as Array<InitialCpuUtilisationChartData>;
 
   const datasets = cpuUtilisation.map((dataset) => {
@@ -54,13 +54,13 @@ export const createCpuUtilisationChart = async (canvas: HTMLCanvasElement) => {
 };
 
 export const updateCpuUtilisationChart = async (
-  chart: Chart<"line", number[], string>
+  chart: Chart<"line", number[], string>,
 ) => {
   await invoke("get_cpu_usage");
 
   await listen<string>("update-cpu-usage", (event) => {
     const updatedCpuUtilisation = JSON.parse(
-      event.payload
+      event.payload,
     ) as UpdatedCpuUtilisationResponse;
 
     chart.data.labels = updatedCpuUtilisation.labels;

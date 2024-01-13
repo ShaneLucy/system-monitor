@@ -4,8 +4,12 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "tsc & vite",
-    "build": "tsc & vite build",
+    "lint": "prettier --write src/** && eslint src/**.ts",
+    "lint-fix": "npm run lint -- --fix",
+    "css-dev": "tailwindcss -i ./src/input.css -o ./src/output.css",
+    "css-prod": "TODO",
+    "dev": "npm run css-dev && npm run lint-fix && vite",
+    "build": "vite build",
     "preview": "vite preview",
     "tauri": "tauri"
   },
@@ -15,8 +19,45 @@
   },
   "devDependencies": {
     "@tauri-apps/cli": "^1.5.8",
+    "@types/eslint": "8.56.0",
+    "@typescript-eslint/eslint-plugin": "^6.18.1",
+    "@typescript-eslint/parser": "^6.18.1",
+    "autoprefixer": "^10.4.16",
+    "eslint": "^8.56.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-airbnb-typescript": "^17.1.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-import": "^2.29.1",
+    "postcss": "^8.4.33",
+    "prettier": "^3.1.1",
+    "tailwindcss": "^3.4.1",
     "tslib": "^2.6.0",
     "typescript": "^5.0.2",
-    "vite": "^5.0.8"
+    "vite": "^5.0.11",
+    "vitest": "^1.0.0"
+  },
+  "eslintConfig": {
+    "root": true,
+    "parser": "@typescript-eslint/parser",
+    "extends": [
+      "airbnb-base",
+      "airbnb-typescript/base",
+      "prettier",
+      "plugin:import/recommended",
+      "plugin:import/typescript"
+    ],
+    "plugins": [
+      "@typescript-eslint"
+    ],
+    "parserOptions": {
+      "sourceType": "module",
+      "ecmaVersion": 12,
+      "project": "./tsconfig.json"
+    },
+    "env": {
+      "browser": true,
+      "es2021": true,
+      "node": true
+    }
   }
 }

@@ -23,7 +23,7 @@ export const createGpuMemoryChart = async (canvas: HTMLCanvasElement) => {
 };
 
 export const updateGpuMemoryChart = async (
-  chart: Chart<"doughnut", number[], string>
+  chart: Chart<"doughnut", number[], string>,
 ) => {
   try {
     const gpuMemoryStats = (await invoke("gpu_memory_stats")) as ChartData;

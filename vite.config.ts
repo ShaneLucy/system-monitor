@@ -1,4 +1,5 @@
-import { defineConfig } from "vite";
+import { resolve } from "path";
+import { defineConfig } from "vitest/config";
 
 // https://vitejs.dev/config/
 export default defineConfig(async () => ({
@@ -13,6 +14,15 @@ export default defineConfig(async () => ({
     watch: {
       // 3. tell vite to ignore watching `src-tauri`
       ignored: ["**/src-tauri/**"],
+    },
+  },
+
+  build: {
+    rollupOptions: {
+      input: {
+        main: resolve(__dirname, "index.html"),
+        cpu: resolve(__dirname, "src/cpu/index.html"),
+      },
     },
   },
 }));
